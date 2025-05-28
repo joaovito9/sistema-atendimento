@@ -14,10 +14,9 @@
         Email: <input type="email" th:field="*{email}" /><br/>
         Sexo:
         <select th:field="*{sexo}">
-            <option th:each="s : ${T(com.toria.chamada.model.Sexo).values()}"
+            <option th:each="s : ${T(com.atendimento.odonto.sistema_atendimento.model.Enum.Sexo).values()}"
                     th:value="${s}" th:text="${s}">Sexo</option>
         </select><br/>
-        Observações: <textarea th:field="*{observacoes}"></textarea><br/>
         <button type="submit">Salvar</button>
     </form>
     <a th:href="@{/pacientes}">Voltar</a>

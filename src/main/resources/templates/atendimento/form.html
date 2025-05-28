@@ -16,6 +16,11 @@
         Data/Hora: <input type="datetime-local" th:field="*{dataHora}" required/><br/>
         Observações: <textarea th:field="*{observacoes}"></textarea><br/>
         Confirmado: <input type="checkbox" th:field="*{confirmado}" /><br/>
+        <label for="formaPagamento">Forma de Pagamento:</label>
+        <select id="formaPagamento" th:field="*{formaPagamento}">
+            <option th:each="fp : ${T(com.atendimento.odonto.sistema_atendimento.model.Enum.FormaPagamento).values()}"
+                    th:value="${fp}" th:text="${fp}">Forma de Pagamento</option>
+        </select>
         <button type="submit">Salvar</button>
     </form>
     <a th:href="@{/atendimentos}">Voltar</a>

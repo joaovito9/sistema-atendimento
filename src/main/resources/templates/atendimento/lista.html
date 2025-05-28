@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1>Atendimentos</h1>
-    <a th:href="@{/atendimentos/novo}">Novo Atendimento</a>
+    <a th:href="@{/atendimentos/novoAtendimento}">Novo Atendimento</a>
     <table border="1">
         <thead>
             <tr>
@@ -15,6 +15,7 @@
                 <th>Data/Hora</th>
                 <th>Observações</th>
                 <th>Confirmado</th>
+                <th>Forma de Pagamento</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -26,6 +27,7 @@
                 <td th:text="${#temporals.format(a.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
                 <td th:text="${a.observacoes}"></td>
                 <td th:text="${a.confirmado ? 'Sim' : 'Não'}"></td>
+                <td th:text="${a.formaPagamento}"></td>
                 <td>
                     <a th:href="@{'/atendimentos/editarAtendimento/' + ${a.id}}">Editar</a> |
                     <a th:href="@{'/atendimentos/excluirAtendimento/' + ${a.id}}">Excluir</a>
