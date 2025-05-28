@@ -27,7 +27,7 @@ public class AtendimentoController {
     @GetMapping("/novoAtendimento")
     public String novoAtendimento(Model model) {
         model.addAttribute("atendimento", new Atendimento());
-        model.addAttribute("pacientes", pacienteService.listarTodos());
+        model.addAttribute("pacientes", pacienteService.listarTodosPacientes());
         return "atendimento/form";
     }
 
@@ -41,7 +41,7 @@ public class AtendimentoController {
     public String editar(@PathVariable Long id, Model model) {
         Atendimento atendimento = atendimentoService.buscarAtendimentoPorId(id).orElseThrow();
         model.addAttribute("atendimento", atendimento);
-        model.addAttribute("pacientes", pacienteService.listarTodos());
+        model.addAttribute("pacientes", pacienteService.listarTodosPacientes());
         return "atendimento/form";
     }
 

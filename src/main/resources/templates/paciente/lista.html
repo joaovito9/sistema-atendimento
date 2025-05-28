@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Pacientes</title>
+</head>
+<body>
+    <h1>Pacientes Cadastrados</h1>
+    <a th:href="@{/pacientes/novo}">Novo Paciente</a>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Data de Nascimento</th>
+                <th>Endereço</th>
+                <th>Telefone</th>
+                <th>Email</th>
+                <th>Sexo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="paciente : ${pacientes}">
+                <td th:text="${paciente.nome}"></td>
+                <td th:text="${#temporals.format(paciente.dataNascimento, 'dd/MM/yyyy')}"></td>
+                <td th:text="${paciente.endereco}"></td>
+                <td th:text="${paciente.telefone}"></td>
+                <td th:text="${paciente.email}"></td>
+                <td th:text="${paciente.sexo}"></td>
+                <td>
+                    <a th:href="@{'/pacientes/editarPaciente/' + ${paciente.id}}">Editar</a> |
+                    <a th:href="@{'/pacientes/excluirPaciente/' + ${paciente.id}}">Excluir</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

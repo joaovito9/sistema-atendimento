@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cadastro de Atendimento</title>
+</head>
+<body>
+    <h1 th:text="${atendimento.id != null} ? 'Editar Atendimento' : 'Novo Atendimento'"></h1>
+    <form th:action="@{/atendimentos/salvarAtendimento}" th:object="${atendimento}" method="post">
+        <input type="hidden" th:field="*{id}" />
+        Paciente:
+        <select th:field="*{paciente.id}">
+            <option th:each="p : ${pacientes}" th:value="${p.id}" th:text="${p.nome}"></option>
+        </select><br/>
+        Procedimento: <input type="text" th:field="*{procedimento}" required/><br/>
+        Valor Pago: <input type="number" step="0.01" th:field="*{valorPago}" required/><br/>
+        Data/Hora: <input type="datetime-local" th:field="*{dataHora}" required/><br/>
+        Observações: <textarea th:field="*{observacoes}"></textarea><br/>
+        Confirmado: <input type="checkbox" th:field="*{confirmado}" /><br/>
+        <button type="submit">Salvar</button>
+    </form>
+    <a th:href="@{/atendimentos}">Voltar</a>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cadastro de Paciente</title>
+</head>
+<body>
+    <h1 th:text="${paciente.id != null} ? 'Editar Paciente' : 'Novo Paciente'"></h1>
+    <form th:action="@{/pacientes/salvarPaciente}" th:object="${paciente}" method="post">
+        <input type="hidden" th:field="*{id}" />
+        Nome: <input type="text" th:field="*{nome}" required/><br/>
+        Data de Nascimento: <input type="date" th:field="*{dataNascimento}" /><br/>
+        Endereço: <input type="text" th:field="*{endereco}" /><br/>
+        Telefone: <input type="text" th:field="*{telefone}" /><br/>
+        Email: <input type="email" th:field="*{email}" /><br/>
+        Sexo:
+        <select th:field="*{sexo}">
+            <option th:each="s : ${T(com.toria.chamada.model.Sexo).values()}"
+                    th:value="${s}" th:text="${s}">Sexo</option>
+        </select><br/>
+        Observações: <textarea th:field="*{observacoes}"></textarea><br/>
+        <button type="submit">Salvar</button>
+    </form>
+    <a th:href="@{/pacientes}">Voltar</a>
+</body>
+</html>
