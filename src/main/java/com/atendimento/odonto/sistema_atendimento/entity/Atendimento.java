@@ -1,6 +1,7 @@
-package com.atendimento.odonto.sistema_atendimento.model;
+package com.atendimento.odonto.sistema_atendimento.entity;
 
-import com.atendimento.odonto.sistema_atendimento.model.Enum.FormaPagamento;
+import com.atendimento.odonto.sistema_atendimento.entity.Enum.FormaPagamento;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -37,7 +38,7 @@ public class Atendimento {
     private BigDecimal valorPago;
 
     @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime dataHora;
 
     @ManyToOne
@@ -49,6 +50,5 @@ public class Atendimento {
     @Enumerated(EnumType.STRING)
     private FormaPagamento formaPagamento;
 
-    // Getters e Setters
 }
 

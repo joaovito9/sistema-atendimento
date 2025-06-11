@@ -1,52 +1,60 @@
 package com.atendimento.odonto.sistema_atendimento.controller;
 
-import com.atendimento.odonto.sistema_atendimento.model.Paciente;
+import com.atendimento.odonto.sistema_atendimento.dto.pacienteDTO.EditarPacienteDTO;
+import com.atendimento.odonto.sistema_atendimento.entity.Atendimento;
+import com.atendimento.odonto.sistema_atendimento.entity.Paciente;
 import com.atendimento.odonto.sistema_atendimento.service.PacienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/pacientes")
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/pacientes")
 public class PacienteController {
     @Autowired
     private PacienteService pacienteService;
 
-    // Lista todos os pacientes
-    @GetMapping
-    public String listarTodosPacientes(Model model) {
-        model.addAttribute("pacientes", pacienteService.listarTodosPacientes());
-        return "paciente/lista"; // /templates/paciente/lista.html
+    @PostMapping("/criarPaciente")
+    public ResponseEntity<Paciente> criarPaciente(@Valid @RequestBody Paciente paciente) {
+
+        Paciente pacienteSalvo = pacienteService.cadastroPaciente(paciente);
+
+        return pacienteSalvo != null
+                ? ResponseEntity.ok(pacienteSalvo) : ResponseEntity.badRequest().build();
     }
 
-    // Formulário para novo paciente
-    @GetMapping("/novoPaciente")
-    public String novoPaciente(Model model) {
-        model.addAttribute("paciente", new Paciente());
-        return "paciente/form"; // /templates/paciente/form.html
+    @PutMapping("/editarPaciente/{id}")
+    public ResponseEntity<Paciente> editarPaciente(@PathVariable Long id, @RequestBody EditarPacienteDTO dto) {
+        Paciente pacienteEditado = pacienteService.editarPaciente(id, dto);
+
+        return ResponseEntity.ok(pacienteEditado);
     }
 
-    // Salvar novo ou atualizado
-    @PostMapping("/salvarPaciente")
-    public String salvarPaciente(@ModelAttribute Paciente paciente) {
-        pacienteService.salvarPaciente(paciente);
-        return "redirect:/pacientes";
-    }
-
-    // Editar paciente existente
-    @GetMapping("/editarPaciente/{id}")
-    public String editarPaciente(@PathVariable Long id, Model model) {
-        Paciente paciente = pacienteService.buscarPacientePorId(id).orElseThrow(()
-                -> new IllegalArgumentException("Paciente não encontrado: " + id));
-        model.addAttribute("paciente", paciente);
-        return "paciente/form";
-    }
-
-    // Excluir paciente
-    @GetMapping("/excluirPaciente/{id}")
-    public String excluirPaciente(@PathVariable Long id) {
+    @DeleteMapping("/excluirPaciente/{id}")
+    public ResponseEntity<String> excluirPaciente(@PathVariable Long id) {
         pacienteService.excluirPaciente(id);
-        return "redirect:/pacientes";
+        return ResponseEntity.ok("Paciente excluído com sucesso");
+    }
+
+    @GetMapping("/listarTodosPacientes")
+    public List<Paciente> listarTodosPacientes() {
+
+        return pacienteService.listarTodosPacientes();
+    }
+
+    @GetMapping("/buscarPacientePorId/{id}")
+    public ResponseEntity<Paciente> buscarPacientePorId(@PathVariable Long id) {
+        Optional<Paciente> paciente = pacienteService.buscarPacientePorId(id);
+        return paciente.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/buscarAtendimentoPorPacienteId/{id}")
+    public ResponseEntity<List<Atendimento>> buscarAtendimentoPorPacienteId(@PathVariable Long id) {
+        List<Atendimento> atendimentoPaciente = pacienteService.buscarAtendimentoPorPacienteId(id);
+        return ResponseEntity.ok(atendimentoPaciente);
     }
 }

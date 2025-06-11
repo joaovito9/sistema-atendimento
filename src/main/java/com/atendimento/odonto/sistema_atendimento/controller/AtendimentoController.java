@@ -1,53 +1,54 @@
 package com.atendimento.odonto.sistema_atendimento.controller;
 
-import com.atendimento.odonto.sistema_atendimento.model.Atendimento;
+import com.atendimento.odonto.sistema_atendimento.dto.atendimento.CriarAtendimentoDTO;
+import com.atendimento.odonto.sistema_atendimento.dto.atendimento.EditarAtendimentoDTO;
+import com.atendimento.odonto.sistema_atendimento.entity.Atendimento;
+import com.atendimento.odonto.sistema_atendimento.entity.Paciente;
 import com.atendimento.odonto.sistema_atendimento.service.AtendimentoService;
 import com.atendimento.odonto.sistema_atendimento.service.PacienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-@Controller
-@RequestMapping("/atendimentos")
+@RestController
+@RequestMapping("/api/atendimentos")
 public class AtendimentoController {
-
     @Autowired
     private AtendimentoService atendimentoService;
 
     @Autowired
     private PacienteService pacienteService;
 
-    @GetMapping
-    public String listarAtendimentos(Model model) {
-        model.addAttribute("atendimentos", atendimentoService.listarTodosAtendimentos());
-        return "atendimento/lista";
+    @PostMapping("/cadastrarAtendimento")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Atendimento> cadastrarAtendimento(@RequestBody @Valid CriarAtendimentoDTO atendimentoDTO) {
+        Atendimento atendimentoSalvo = atendimentoService.cadastrarAtendimento(atendimentoDTO);
+
+        return atendimentoSalvo != null
+                ? ResponseEntity.ok(atendimentoSalvo) : ResponseEntity.badRequest().build();
     }
 
-    @GetMapping("/novoAtendimento")
-    public String novoAtendimento(Model model) {
-        model.addAttribute("atendimento", new Atendimento());
-        model.addAttribute("pacientes", pacienteService.listarTodosPacientes());
-        return "atendimento/form";
+    @PutMapping("/editarAtendimento/{id}")
+    public ResponseEntity<Atendimento> editarAtendimento(@PathVariable Long id, @RequestBody EditarAtendimentoDTO atendimentoDTO) {
+        Atendimento atendimentoEditado = atendimentoService.editarAtendimento(id, atendimentoDTO);
+
+        return atendimentoEditado != null
+                ? ResponseEntity.ok(atendimentoEditado) : ResponseEntity.badRequest().build();
     }
 
-    @PostMapping("/salvarAtendimento")
-    public String salvarAtendimento(@ModelAttribute Atendimento atendimento) {
-        atendimentoService.salvarAtendimento(atendimento);
-        return "redirect:/atendimentos";
-    }
-
-    @GetMapping("/editar/{id}")
-    public String editar(@PathVariable Long id, Model model) {
-        Atendimento atendimento = atendimentoService.buscarAtendimentoPorId(id).orElseThrow();
-        model.addAttribute("atendimento", atendimento);
-        model.addAttribute("pacientes", pacienteService.listarTodosPacientes());
-        return "atendimento/form";
-    }
-
-    @GetMapping("/excluirAtendimento/{id}")
-    public String excluirAtendimento(@PathVariable Long id) {
+    @DeleteMapping("/excluirAtendimento/{id}")
+    public ResponseEntity<String> excluirAtendimento(@PathVariable Long id) {
         atendimentoService.excluirAtendimento(id);
-        return "redirect:/atendimentos";
+        return ResponseEntity.ok("Atendimento excluído com sucesso");
     }
+
+    @GetMapping("/listarAtendimentos")
+    public ResponseEntity<Iterable<Atendimento>> listarAtendimentos() {
+        return ResponseEntity.ok(atendimentoService.listarTodosAtendimentos());
+    }
+
 }

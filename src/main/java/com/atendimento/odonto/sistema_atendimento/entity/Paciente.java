@@ -1,6 +1,7 @@
-package com.atendimento.odonto.sistema_atendimento.model;
+package com.atendimento.odonto.sistema_atendimento.entity;
 
-import com.atendimento.odonto.sistema_atendimento.model.Enum.Sexo;
+import com.atendimento.odonto.sistema_atendimento.entity.Enum.Sexo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,11 +26,19 @@ public class Paciente {
 
     private String nome;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataNascimento;
 
-    private String endereco;
+    private String profissao;
 
+    private String rua;
+    private String numero;
+    private String bairro;
+    private String cidade;
+    private String estado;
+    private String cep;
+    private String complemento;
+
+    @Column(unique = true)
     private String cpf;
 
     private String telefone;
@@ -41,8 +50,8 @@ public class Paciente {
 
     // relacionamento com atendimento
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Atendimento> atendimentos;
 
-    // Getters e Setters
 }
 
