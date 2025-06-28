@@ -1,8 +1,8 @@
 package com.atendimento.odonto.sistema_atendimento.service;
 
-import com.atendimento.odonto.sistema_atendimento.dto.pacienteDTO.EditarPacienteDTO;
 import com.atendimento.odonto.sistema_atendimento.entity.Atendimento;
 import com.atendimento.odonto.sistema_atendimento.entity.Paciente;
+import com.atendimento.odonto.sistema_atendimento.exception.PacienteException;
 import com.atendimento.odonto.sistema_atendimento.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,34 +16,18 @@ public class PacienteService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
-    public Paciente cadastroPaciente(Paciente  paciente) {
-            return pacienteRepository.save(paciente);
-    }
-
-    public Paciente editarPaciente(Long id, EditarPacienteDTO pacienteDTO) {
-        Optional<Paciente> pacienteExistente = pacienteRepository.findById(id);
-
-        if (pacienteExistente.isPresent()) {
-            Paciente paciente = pacienteExistente.get();
-            paciente.setNome(pacienteDTO.getNome());
-            paciente.setDataNascimento(pacienteDTO.getDataNascimento());
-            paciente.setProfissao(pacienteDTO.getProfissao());
-            paciente.setRua(pacienteDTO.getRua());
-            paciente.setNumero(pacienteDTO.getNumero());
-            paciente.setBairro(pacienteDTO.getBairro());
-            paciente.setCidade(pacienteDTO.getCidade());
-            paciente.setEstado(pacienteDTO.getEstado());
-            paciente.setCep(pacienteDTO.getCep());
-            paciente.setComplemento(pacienteDTO.getComplemento());
-            paciente.setCpf(pacienteDTO.getCpf());
-            paciente.setTelefone(pacienteDTO.getTelefone());
-            paciente.setEmail(pacienteDTO.getEmail());
-            paciente.setSexo(pacienteDTO.getSexo());
-
-            return pacienteRepository.save(paciente);
+    public Paciente cadastrarEditarPaciente(Paciente  paciente) throws PacienteException {
+        if (paciente.getCpf() == null || paciente.getCpf().isEmpty()) {
+            throw new PacienteException("CPF não pode ser nulo");
         }
 
-        return null;
+        Paciente procurarPaciente = pacienteRepository.findByCpf(paciente.getCpf());
+
+        if (procurarPaciente != null) {
+            throw new PacienteException("Já existe um paciente com esse CPF");
+        }
+
+        return pacienteRepository.save(paciente);
     }
 
     public List<Paciente> listarTodosPacientes() {

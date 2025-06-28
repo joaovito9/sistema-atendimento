@@ -1,11 +1,12 @@
 package com.atendimento.odonto.sistema_atendimento.controller;
 
-import com.atendimento.odonto.sistema_atendimento.dto.pacienteDTO.EditarPacienteDTO;
 import com.atendimento.odonto.sistema_atendimento.entity.Atendimento;
 import com.atendimento.odonto.sistema_atendimento.entity.Paciente;
+import com.atendimento.odonto.sistema_atendimento.exception.PacienteException;
 import com.atendimento.odonto.sistema_atendimento.service.PacienteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,20 +19,15 @@ public class PacienteController {
     @Autowired
     private PacienteService pacienteService;
 
-    @PostMapping("/criarPaciente")
-    public ResponseEntity<Paciente> criarPaciente(@Valid @RequestBody Paciente paciente) {
-
-        Paciente pacienteSalvo = pacienteService.cadastroPaciente(paciente);
-
-        return pacienteSalvo != null
-                ? ResponseEntity.ok(pacienteSalvo) : ResponseEntity.badRequest().build();
-    }
-
-    @PutMapping("/editarPaciente/{id}")
-    public ResponseEntity<Paciente> editarPaciente(@PathVariable Long id, @RequestBody EditarPacienteDTO dto) {
-        Paciente pacienteEditado = pacienteService.editarPaciente(id, dto);
-
-        return ResponseEntity.ok(pacienteEditado);
+    @PostMapping("/cadastrarEditarPaciente")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Object> cadastrarEditarPaciente(@Valid @RequestBody Paciente paciente) {
+        try {
+            Paciente pacienteSalvo = pacienteService.cadastrarEditarPaciente(paciente);
+            return ResponseEntity.ok(pacienteSalvo);
+        } catch (PacienteException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/excluirPaciente/{id}")
